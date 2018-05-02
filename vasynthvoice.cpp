@@ -10,33 +10,36 @@ void VASynthVoice::init()
   setOsc1Wave(SAW);
   setOsc2Wave(SAW);
   envelope.setADLevels(255,255);
-  setEnvAttack(random(0,256));
-  setEnvDecay(random(0,256));
-  setEnvRelease(random(0,256));
-  setEnvSustain(random(0,256));
+  setEnvAttack(30);
+  setEnvDecay(30);
+  setEnvRelease(30);
+  setEnvSustain(250);
+  envelope.setSustainTime(8000);
   svf_lowpass.setCentreFreq(100);  
   svf_lowpass.setResonance(1);
+  lowpass.setCutoffFreq(frequency);
+  lowpass.setResonance(resonance);
 
 }
 void VASynthVoice::setEnvAttack(int a)
 {
   envAttack = a;
-  envelope.setTimes(envAttack,envDecay,envSustain,envRelease);
+  envelope.setAttackTime(envAttack);
 }
 void VASynthVoice::setEnvDecay(int d)
 {
   envDecay = d;
-  envelope.setTimes(envAttack,envDecay,envSustain,envRelease);
+  envelope.setDecayTime(envDecay);
 }
 void VASynthVoice::setEnvSustain(int s)
 {
   envSustain = s;
-  envelope.setTimes(envAttack,envDecay,envSustain,envRelease);
+  envelope.setSustainLevel(envSustain);
 }
 void VASynthVoice::setEnvRelease(int r)
 {
   envRelease = r;
-  envelope.setTimes(envAttack,envDecay,envSustain,envRelease);
+  envelope.setReleaseTime(envRelease);
 }
 void VASynthVoice::setOsc1Wave(Wavetype w)
 {
@@ -92,16 +95,18 @@ int VASynthVoice::next()
 {
   
   return 
-    //svf_lowpass.next(
-      ((envelope.next()*(osc1.next() + osc2.next())))
-      //)
+    lowpass.next(
+      ((gain*(osc1.next() + osc2.next())))
+      )
       >>8;
 }
 void VASynthVoice::noteOn(float freq)
 {
   osc1.setFreq(freq);
   osc2.setFreq(freq);
+  
   envelope.noteOn();
+  //envelope.update();
 }
 void VASynthVoice::noteOff()
 {
@@ -110,7 +115,18 @@ void VASynthVoice::noteOff()
 void VASynthVoice::updateControl()
 {
   envelope.update();
+  gain = envelope.next();
 }
 
+void VASynthVoice::setFrequency(int freq)
+{
+  frequency = freq;
+  lowpass.setCutoffFreq(frequency);
+}
 
+void VASynthVoice::setResonance(int reso)
+{
+  resonance = reso;
+  lowpass.setResonance(reso);
+}
 

@@ -306,7 +306,7 @@ void Screen::init()
     SPI.begin();
     SPI.setBitOrder(MSBFIRST); // Set the SPI bit order
     SPI.setDataMode(SPI_MODE0); //Set the  SPI data mode 0
-    SPI.setClockDivider(SPI_CLOCK_DIV32); // 2.25  MHz
+    SPI.setClockDivider(SPI_CLOCK_DIV4); // 2.25  MHz
   
     digitalWrite(OLED_RESET, HIGH);
     delay(10);

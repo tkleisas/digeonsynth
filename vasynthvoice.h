@@ -13,7 +13,7 @@
 #include <EventDelay.h>
 #include <ADSR.h>
 #include <mozzi_rand.h>
-
+#include <LowPassFilter.h>
 
 class VASynthVoice
 {
@@ -23,7 +23,8 @@ class VASynthVoice
     void init();
     void setOsc1Wave(Wavetype w);
     void setOsc2Wave(Wavetype w);
-    
+    void setResonance(int reso);
+    void setFrequency(int freq);
     void setEnvAttack(int a);
     void setEnvDecay(int d);
     void setEnvSustain(int s);
@@ -37,7 +38,7 @@ class VASynthVoice
   int envDecay;
   int envSustain;
   int envRelease;
-  ADSR <CONTROL_RATE, AUDIO_RATE> envelope;
+  ADSR <CONTROL_RATE, CONTROL_RATE> envelope;
   float osc1freq;
   float osc2freq;
   Wavetype osc1wavetype;
@@ -45,10 +46,13 @@ class VASynthVoice
   boolean note_is_on = false;
   int osc1amp = 255;
   int osc2amp = 255;
-  
+  int frequency = 255;
+  int resonance = 100;
+  private:
+    int gain = 0;
   
   StateVariable <LOWPASS> svf_lowpass; // can be LOWPASS, BANDPASS, HIGHPASS or NOTCH
-
+  LowPassFilter lowpass;
   Oscil <512, AUDIO_RATE> osc1;
   Oscil <512, AUDIO_RATE> osc2;
   Oscil <512, CONTROL_RATE> lfo1;
